@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">UniGameProject</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_start_server">Start server</string>
+    <string name="menu_connect">Connect (Chat)</string>
+    <string name="menu_connect_send_class">Connect (send Class)</string>
+    <string name="enter_message">Enter your message</string>
+    <string name="button_send">Send</string>
+
+</resources>
