@@ -4,17 +4,20 @@ package julia.connectivity.communication;
 /**
  * Created by julia on 20.06.16.
  */
-public class CoordinateMessage implements Message {
+public class CoordinateMessage extends BaseMessage {
     private double ordinate;
     private double abscissa;
+    private int[] displayResolution;
+
 
     public CoordinateMessage(){
 
     }
 
-    public CoordinateMessage(double ordinate, double abscissa){
+    public CoordinateMessage(double ordinate, double abscissa, int[] display_resolution){
         this.ordinate = ordinate;
         this.abscissa = abscissa;
+        this.displayResolution = display_resolution;
     }
 
     public double getOrdinate() {
@@ -33,7 +36,16 @@ public class CoordinateMessage implements Message {
         this.abscissa = abscissa;
     }
 
-    public String getCoordinateMessage(){
-        return ("ordinate = " + ordinate + ", abscissa = " + abscissa).toString();
+    public int[] getDisplayResolution() {
+        return displayResolution;
     }
+
+    public void setDisplayResolution(int[] displayResolution) {
+        this.displayResolution = displayResolution;
+    }
+
+/*    public String getCoordinateMessage(){
+        return "ordinate = " + ordinate + ", abscissa = " + abscissa + "\n" +
+                    "Display resolution: " + displayResolution[0] + "; " + displayResolution[1];
+    } */
 }

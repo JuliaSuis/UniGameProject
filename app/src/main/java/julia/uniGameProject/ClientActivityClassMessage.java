@@ -4,13 +4,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.graphics.Point;
+import android.view.Display;
+
+import java.util.Date;
 
 import julia.connectivity.Connection;
 import julia.connectivity.client.Client;
 import julia.connectivity.communication.CoordinateMessage;
+import julia.connectivity.communication.SimpleMessage;
 
 
 public class ClientActivityClassMessage extends AppCompatActivity {
+
+    private int[] resolution;
 
     private Button mButtonSendClass;
 
@@ -21,7 +28,10 @@ public class ClientActivityClassMessage extends AppCompatActivity {
             if (client == null) {
                 throw new RuntimeException("Client must be sat first!");
             }
-            client.sendMessage(new CoordinateMessage(9, 13));
+
+            CoordinateMessage coordinateMessage = new CoordinateMessage(9, 13, resolution);
+            coordinateMessage.setSendTime(new Date());
+            client.sendMessage(coordinateMessage);
         }
     };
 
@@ -31,6 +41,11 @@ public class ClientActivityClassMessage extends AppCompatActivity {
         setContentView(R.layout.activity_client_activity_class_message);
         mButtonSendClass = (Button) findViewById(R.id.button_send_class_message);
         mButtonSendClass.setEnabled(false);
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        resolution = new int[]{size.x, size.y};
     }
 
     @Override

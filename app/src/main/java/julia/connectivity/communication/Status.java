@@ -3,7 +3,7 @@ package julia.connectivity.communication;
 /**
  * Created by julia on 18.06.16.
  */
-public class Status implements StatusMessage {
+public class Status extends BaseMessage implements StatusMessage {
     private String status;
 
     public Status() {

@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.Date;
+
 import julia.connectivity.Connection;
 import julia.connectivity.client.Client;
 import julia.connectivity.communication.SimpleMessage;
@@ -27,7 +29,9 @@ public class ClientActivity extends AppCompatActivity {
                 Editable editable = input.getText();
                 char[] text = new char[editable.length()];
                 editable.getChars(0, text.length, text, 0);
-                client.sendMessage(new SimpleMessage(String.valueOf(text)));
+                SimpleMessage simpleMessage = new SimpleMessage(String.valueOf(text));
+                simpleMessage.setSendTime(new Date());
+                client.sendMessage(simpleMessage);
                 editable.clear();
             }
         }

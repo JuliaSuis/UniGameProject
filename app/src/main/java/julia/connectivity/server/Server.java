@@ -13,11 +13,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import julia.connectivity.communication.BaseMessage;
 import julia.connectivity.communication.Message;
 import julia.connectivity.communication.SimpleMessage;
 import julia.connectivity.communication.Status;
 import julia.connectivity.communication.StatusMessage;
-import julia.connectivity.communication.TalkMessage;
 import julia.connectivity.serialization.Parser;
 import julia.connectivity.serialization.Serializer;
 
@@ -82,7 +82,8 @@ public class Server {
             LISTENER_LOCK.unlock();
         }
         try {
-            Message message = Parser.parse(msg, Message.class);
+            BaseMessage message = Parser.parse(msg, BaseMessage.class);
+            message.setClientId(clientInfo);
             if (message instanceof StatusMessage) {
                 StatusMessage status = (StatusMessage)message;
                 if(StatusMessage.CONNECTION_OK.equals(status.getStatus())) {

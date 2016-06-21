@@ -3,7 +3,7 @@ package julia.connectivity.communication;
 /**
  * Created by julia on 18.06.16.
  */
-public class SimpleMessage implements TalkMessage {
+public class SimpleMessage extends BaseMessage implements TalkMessage {
     private String message;
 
     public SimpleMessage() {

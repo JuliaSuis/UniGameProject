@@ -8,6 +8,7 @@ import android.widget.Toast;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -50,9 +51,10 @@ public class CustomClassMessageClientActionListener implements ClientActionListe
                 final CoordinateMessage coordinateMessage = ((CoordinateMessage) message);
                 final TextView serverOut = (TextView) current.findViewById(R.id.list_view_coordinate_receive);
                 if (serverOut == null) {
-                    cachedMessages.add(String.format("[%s]: Abscissa: %s , Ordinate: %s",
-                            currentTime(),
-                            coordinateMessage.getAbscissa(), coordinateMessage.getOrdinate()));
+                    cachedMessages.add(String.format("[%s ; %s]: Abscissa: %s , Ordinate: %s, " +
+                                    "Display resolution:  %s", formatTime(coordinateMessage.getSendTime()), coordinateMessage.getClientId(),
+                            coordinateMessage.getAbscissa(), coordinateMessage.getOrdinate(),
+                            Arrays.toString(coordinateMessage.getDisplayResolution())));
                 } else {
                     current.runOnUiThread(new Runnable() {
                         @Override
@@ -63,8 +65,10 @@ public class CustomClassMessageClientActionListener implements ClientActionListe
                                     serverOut.append("\n");
                                 }
                             }
-                            serverOut.append(String.format("[%s]: Abscissa: %s , Ordinate: %s", currentTime(),
-                                    coordinateMessage.getAbscissa(), coordinateMessage.getOrdinate()));
+                            serverOut.append(String.format("[%s ; %s]: Abscissa: %s , Ordinate: %s, " +
+                                    "Display resolution:  %s", formatTime(coordinateMessage.getSendTime()), coordinateMessage.getClientId(),
+                                    coordinateMessage.getAbscissa(), coordinateMessage.getOrdinate(),
+                                    Arrays.toString(coordinateMessage.getDisplayResolution())));
                             serverOut.append("\n");
                         }
                     });
@@ -75,8 +79,8 @@ public class CustomClassMessageClientActionListener implements ClientActionListe
         }
     }
 
-    private String currentTime() {
-        return DATE_FORMATTER.format(new Date());
+    private String formatTime(Date date) {
+        return DATE_FORMATTER.format(date);
     }
 
     public void onSend(String msg) {
