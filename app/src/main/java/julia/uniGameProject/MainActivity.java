@@ -18,7 +18,7 @@ import julia.connectivity.NetworkDiscovery;
 import julia.connectivity.client.ClientActionListener;
 import julia.connectivity.communication.Status;
 import julia.connectivity.communication.StatusMessage;
-import julia.uniGameProject.io.CustomClassMessageClientActionListener;
+import julia.uniGameProject.io.CustomStitchActionListener;
 import julia.uniGameProject.io.CustomClientActionListener;
 import julia.uniGameProject.io.CustomServerActionListener;
 
@@ -34,6 +34,7 @@ public class MainActivity extends Activity {
         public void onClick(View v) {
             WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
             int intaddr = wifi.getConnectionInfo().getIpAddress();
+            Log.d(DEBUG_TAG, "MYYYYYYYY INTADDR IS " + intaddr);
 
             if (wifi.getWifiState() == WifiManager.WIFI_STATE_DISABLED || intaddr == 0) {
                 startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
@@ -68,8 +69,8 @@ public class MainActivity extends Activity {
     private View.OnClickListener mButtonConnectSendClassOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            connect(new CustomClassMessageClientActionListener());
-            Intent intent = new Intent(MainActivity.this, ClientActivityClassMessage.class);
+            connect(new CustomStitchActionListener());
+            Intent intent = new Intent(MainActivity.this, StitchActivity.class);
             startActivity(intent);
         }
     };

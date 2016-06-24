@@ -3,12 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context="julia.uniGameProject.ClientActivityClassMessage">
+    tools:context=".StitchActivity">
 
     <Button
         android:id="@+id/button_send_class_message"
@@ -28,5 +24,11 @@
             android:layout_weight="2"
             android:text=""/>
     </ScrollView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/stich_field"
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

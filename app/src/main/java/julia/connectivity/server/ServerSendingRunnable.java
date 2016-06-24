@@ -21,7 +21,7 @@ public class ServerSendingRunnable implements Runnable {
 
     public ServerSendingRunnable(Server server) {
         this.server = server;
-        sendMessageQueue = new ArrayBlockingQueue<>(32);
+        sendMessageQueue = new ArrayBlockingQueue<>(1024);
     }
 
     public void sendMessageToClient(String msg, Socket client) {

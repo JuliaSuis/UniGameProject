@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ClientActivity" />
-        <activity android:name=".ClientActivityClassMessage"></activity>
+        <activity android:name=".StitchActivity"></activity>
     </application>
 
 </manifest>

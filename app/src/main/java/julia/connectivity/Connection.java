@@ -71,6 +71,7 @@ public class Connection {
         return client != null;
     }
 
+
     /**
      * creates server & connects to it
      */

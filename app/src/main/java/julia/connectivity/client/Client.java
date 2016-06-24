@@ -28,18 +28,26 @@ public class Client {
     private final InetAddress inetAddress;
     private final int port;
 
+    static String love = "";
+
+    static public String getLove(){
+        return love;
+    }
+
     private volatile ClientActionListener actionListener;
 
     public Client(final InetAddress inetAddress,
                   final int port) {
-        sendMessageQueue = new ArrayBlockingQueue<>(32);
+        sendMessageQueue = new ArrayBlockingQueue<>(164);
         this.inetAddress = inetAddress;
+        love = inetAddress.toString();
         this.port = port;
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
                     serverSocket = new Socket(inetAddress, port);
+                    Log.d(DEBUG_TAG, "My LOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + inetAddress);
                     sendingThreadExecutor.execute(new ClientSendingRunnable(
                             Client.this,
                             serverSocket,
