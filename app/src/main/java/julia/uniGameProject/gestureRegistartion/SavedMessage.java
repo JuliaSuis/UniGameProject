@@ -9,14 +9,16 @@ public class SavedMessage {
     private StitchMessage stitchMessage;
     private int stitchNum;
     private boolean stitchOwner;
+    private int side;
 
     public SavedMessage(){
     }
 
-    public SavedMessage(StitchMessage stitchMessage, int stitchNum, boolean stitchOwner){
+    public SavedMessage(StitchMessage stitchMessage, int stitchNum, boolean stitchOwner, int side){
         this.stitchMessage = stitchMessage;
         this.stitchNum = stitchNum;
         this.stitchOwner = stitchOwner;
+        this.side = side;
     }
 
     public StitchMessage getStitchMessage() {
@@ -29,6 +31,10 @@ public class SavedMessage {
 
     public boolean isStitchOwner() {
         return stitchOwner;
+    }
+
+    public int getSide() {
+        return side;
     }
 
     public String getSavedMessage(){

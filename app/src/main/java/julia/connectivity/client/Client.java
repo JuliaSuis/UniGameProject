@@ -28,10 +28,10 @@ public class Client {
     private final InetAddress inetAddress;
     private final int port;
 
-    static String love = "";
+    static String idMsg = "";
 
-    static public String getLove(){
-        return love;
+    static public String getIdMsg(){
+        return idMsg;
     }
 
     private volatile ClientActionListener actionListener;
@@ -40,7 +40,7 @@ public class Client {
                   final int port) {
         sendMessageQueue = new ArrayBlockingQueue<>(164);
         this.inetAddress = inetAddress;
-        love = inetAddress.toString();
+        idMsg = inetAddress.toString();
         this.port = port;
         new AsyncTask<Void, Void, Void>() {
             @Override

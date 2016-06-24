@@ -1,13 +1,20 @@
 package julia.uniGameProject;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Layout;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.graphics.Point;
 import android.view.Display;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.Date;
@@ -17,9 +24,14 @@ import julia.connectivity.client.Client;
 import julia.connectivity.communication.CoordinateMessage;
 import julia.connectivity.communication.SimpleMessage;
 import julia.connectivity.communication.StitchMessage;
+import julia.uniGameProject.gestureRegistartion.MessageProcessing;
+import julia.uniGameProject.gestureRegistartion.Neighbour;
 
 
 public class StitchActivity extends AppCompatActivity implements View.OnTouchListener{
+
+    private static final String DEBUG_TAG = StitchActivity.class.getName();
+
 
     private int[] resolution;
 
@@ -30,6 +42,11 @@ public class StitchActivity extends AppCompatActivity implements View.OnTouchLis
 
     private Button mButtonSendClass;
     private View view;
+    private Bitmap bitmap ;
+    private Canvas canvas;
+    private Paint paint;
+    private ImageView imageView;
+
 
 
     @Override
@@ -52,13 +69,25 @@ public class StitchActivity extends AppCompatActivity implements View.OnTouchLis
                 xEnd = x;
                 yEnd = y;
                 mButtonSendClass.setEnabled(true);
+                Client client = Connection.getConnection().getClientInstance();
+                if (client == null) {
+                    throw new RuntimeException("Client must be sat first!");
+                }
+
+                StitchMessage stitchMessage = new StitchMessage(xStart, yStart, xEnd, yEnd, resolution);
+                stitchMessage.setSendTime(new Date());
+                client.sendMessage(stitchMessage);
 
                 //  stitchOffset();
-                //    dataProcessing();
+
+
+
                 break;
             case MotionEvent.ACTION_CANCEL:
         }
 
+        // how to call neighboutToDraw
+        //Neighbour neighbourForDraw = MessageProcessing.getNeighbourForDraw();
 
         return true;
     }
@@ -69,14 +98,26 @@ public class StitchActivity extends AppCompatActivity implements View.OnTouchLis
     private View.OnClickListener mButtonSendClassListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Client client = Connection.getConnection().getClientInstance();
+       /*     Client client = Connection.getConnection().getClientInstance();
             if (client == null) {
                 throw new RuntimeException("Client must be sat first!");
             }
 
             StitchMessage stitchMessage = new StitchMessage(xStart, yStart, xEnd, yEnd, resolution);
             stitchMessage.setSendTime(new Date());
-            client.sendMessage(stitchMessage);
+            client.sendMessage(stitchMessage); */
+
+
+            Neighbour neighbourForDraw = MessageProcessing.getNeighbourForDraw();
+            float x1 = (float) neighbourForDraw.getxUp();
+            float y1 = (float) neighbourForDraw.getyUp();
+            float x2 = (float) neighbourForDraw.getxDown();
+            float y2 = (float) neighbourForDraw.getyDown();
+
+            canvas.drawLine(x1,y1,x2,y2, paint);
+
+            Log.i(DEBUG_TAG, "x1= " + x1 + " y1= " + y1 + " x2= " + x2 + " y2= " + y2);
+            imageView.invalidate();
         }
     };
 
@@ -97,6 +138,20 @@ public class StitchActivity extends AppCompatActivity implements View.OnTouchLis
         Point size = new Point();
         display.getSize(size);
         resolution = new int[]{size.x, size.y};
+
+        int xMax = size.x;
+        int yMax = size.y;
+
+        imageView = (ImageView) this.findViewById(R.id.imageView);
+        LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(xMax,yMax);
+        imageView.setLayoutParams(parms);
+        bitmap = Bitmap.createBitmap((int) xMax, (int) yMax,Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(bitmap);
+        paint = new Paint();
+        paint.setStrokeWidth(20);
+        paint.setColor(Color.RED);
+        imageView.setImageBitmap(bitmap);
+        imageView.setOnTouchListener(this);
     }
 
     @Override

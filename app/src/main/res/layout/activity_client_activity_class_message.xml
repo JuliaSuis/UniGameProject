@@ -13,17 +13,17 @@
         android:layout_gravity="center_horizontal"
         android:text="Send Class"/>
 
-    <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/imageView" />
 
-        <TextView
-            android:id="@+id/list_view_coordinate_receive"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text=""/>
-    </ScrollView>
+    <TextView
+        android:id="@+id/list_view_coordinate_receive"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:text=""/>
 
     <TextView
         android:layout_width="match_parent"

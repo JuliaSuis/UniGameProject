@@ -14,6 +14,12 @@ import julia.connectivity.communication.StitchMessage;
  */
 public class MessageProcessing {
     private static final String DEBUG_TAG = MessageProcessing.class.getName();
+    public static Neighbour neighbourForDraw = new Neighbour();
+
+    public static Neighbour getNeighbourForDraw() {
+        return neighbourForDraw;
+    }
+
     private MessageProcessing(){
     }
 
@@ -24,41 +30,50 @@ public class MessageProcessing {
     }
 
     public static void messageProcessing(StitchMessage stitchMessage) {
+        Log.i(DEBUG_TAG, "NEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW ");
         int[] numAndSide = StitchEvaluations.getStitchNumAndSide(stitchMessage);
         boolean owner = StitchEvaluations.checkOwner(stitchMessage);
+        Log.i(DEBUG_TAG, "Am I owner? " + owner);
         if (numAndSide[0] == 1) {
             if (savedMessages.isEmpty()) {
-                addSavedMessage(new SavedMessage(stitchMessage, numAndSide[0], owner));
+                addSavedMessage(new SavedMessage(stitchMessage, numAndSide[0], owner, numAndSide[1]));
+                Log.i(DEBUG_TAG, "We've saved 1 stitch message and the weren't any previous ones");
             } else {
-                if (savedMessages.get(savedMessages.size()).isStitchNum() == 1) {
+                if (savedMessages.get(savedMessages.size()-1).isStitchNum() == 1) {
                     savedMessages.clear();
-                    addSavedMessage(new SavedMessage(stitchMessage, numAndSide[0], owner));
+                    addSavedMessage(new SavedMessage(stitchMessage, numAndSide[0], owner, numAndSide[1]));
+                    Log.i(DEBUG_TAG, "We've saved 1 stitch message and cleaned previous");
                 } else {
+                    savedMessages.clear();
                     Log.i(DEBUG_TAG, "??????????How about 1 NO??????????? ");
                 }
             }
         } else if (numAndSide[0] == 2) {
               if (savedMessages.isEmpty()) {
-                  Log.i(DEBUG_TAG, "??????????How about 2 NO??????????? ");
+                  Log.i(DEBUG_TAG, "We've received 2 stitch message, but there are no previous 1 stitck messages Or First stitch was mine! Wrong! ");
               } else {
                   if (owner == true) {
-                      if (savedMessages.get(savedMessages.size()).getStitchMessage().getSendTime().equals(Calendar.DATE)) {
-                          //compare times
-                          // if time is ok
-                          //create neighbour and add him
+                      if (StitchEvaluations.checkDelay(savedMessages.get(savedMessages.size()-1).getStitchMessage().getSendTime().getTime(), stitchMessage.getSendTime().getTime())) {
+                          neighbourForDraw =  Neighbour.createNeighbour(savedMessages.get(savedMessages.size()-1), new SavedMessage(stitchMessage, numAndSide[0], owner, numAndSide[1]));
+                          Log.i(DEBUG_TAG, "We've received my own 2 stitch message and delay is ok!  ");
+                          savedMessages.clear();
                       } else {
                             savedMessages.clear();
+                          Log.i(DEBUG_TAG, "We've received my own 2 stitch message but delay is NOT ok!  ");
                           }
                       } else {
-                      if (savedMessages.get(savedMessages.size()).isStitchOwner() == true) {
-                          if (savedMessages.get(savedMessages.size()).getStitchMessage().getSendTime().equals(new Date())) {
-                            //compare time
-                              // create neighbour and add him
+                      if (savedMessages.get(savedMessages.size()-1).isStitchOwner() == true) {
+                          if (StitchEvaluations.checkDelay(savedMessages.get(savedMessages.size()-1).getStitchMessage().getSendTime().getTime(), stitchMessage.getSendTime().getTime())) {
+                              neighbourForDraw =  Neighbour.createNeighbour(savedMessages.get(savedMessages.size()-1), new SavedMessage(stitchMessage, numAndSide[0], owner, numAndSide[1]));
+                              Log.i(DEBUG_TAG, "We've received 2 stitch message, the previous 1 stitch message was mine and time daelay is ok!  ");
+                              savedMessages.clear();
                           } else {
                               savedMessages.clear();
+                              Log.i(DEBUG_TAG, "We've received 2 stitch message, the previous 1 stitch message was mine and time daelay is NOT ok!  ");
                           }
                       } else {
                           savedMessages.clear();
+                          Log.i(DEBUG_TAG, "The both messages are not mine ");
                       }
                   }
               }

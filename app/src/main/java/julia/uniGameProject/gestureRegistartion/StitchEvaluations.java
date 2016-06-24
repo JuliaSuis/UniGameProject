@@ -3,21 +3,15 @@ package julia.uniGameProject.gestureRegistartion;
 /**
  * Created by julia on 23.06.16.
  */
-import android.content.Context;
-import android.net.wifi.WifiManager;
-import javax.jmdns.ServiceInfo;
-import julia.connectivity.NetworkDiscovery;
-import android.provider.Settings;
-import android.app.Activity;
 
-import java.util.Date;
+import android.util.Log;
 
 import julia.connectivity.client.Client;
 import julia.connectivity.communication.StitchMessage;
-import julia.uniGameProject.MainActivity;
-import julia.uniGameProject.io.CustomStitchActionListener;
 
 public class StitchEvaluations {
+
+    private static final String DEBUG_TAG = StitchEvaluations.class.getName();
 
     private StitchEvaluations(){
     }
@@ -25,6 +19,19 @@ public class StitchEvaluations {
     //WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
     //int intaddr = wifi.getConnectionInfo().getIpAddress();
 
+    public static boolean checkDelay(long msgSentTime, long MsgReceivedDateMS){
+        long delay = MsgReceivedDateMS - msgSentTime;
+        if (delay < 5000) {
+            Log.i(DEBUG_TAG, "1st Msg = " + msgSentTime + " 2nd Msg " + MsgReceivedDateMS);
+            Log.i(DEBUG_TAG, "Delay is = " + delay);
+            return true;
+        }
+        else {
+            Log.i(DEBUG_TAG, "1st Msg = " + msgSentTime + " 2nd Msg " + MsgReceivedDateMS);
+            Log.i(DEBUG_TAG, "Delay is = " + delay);
+            return false;
+        }
+    }
 
     public static int[] getStitchNumAndSide(StitchMessage stitchMessage){
         // 0-down, 1-left, 2-up, 3-right, 4-up
@@ -57,7 +64,9 @@ public class StitchEvaluations {
 
     public static boolean checkOwner(StitchMessage stitchMessage){
         String SenderId = stitchMessage.getClientId();
-        String MyId = Client.getLove().substring(1);
+        Log.i(DEBUG_TAG, "SenderId " + SenderId);
+        String MyId = Client.getIdMsg().substring(1);
+        Log.i(DEBUG_TAG, "MyId " + MyId);
         if (SenderId.equals(MyId)) {
             return true;
         } else {

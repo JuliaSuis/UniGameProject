@@ -20,6 +20,7 @@ import julia.connectivity.communication.StitchMessage;
 import julia.connectivity.serialization.Parser;
 import julia.uniGameProject.R;
 import julia.uniGameProject.SampleApplication;
+import julia.uniGameProject.gestureRegistartion.MessageProcessing;
 import julia.uniGameProject.gestureRegistartion.SavedMessage;
 import julia.uniGameProject.gestureRegistartion.StitchEvaluations;
 
@@ -72,16 +73,17 @@ public class CustomStitchActionListener implements ClientActionListener {
                 final StitchMessage stitchMessage = ((StitchMessage) message);
                 final TextView serverOut = (TextView) current.findViewById(R.id.list_view_coordinate_receive);
                 if (serverOut == null) {
-                    cachedMessages.add(String.format("[%s ; %s]: xStart, yStart: %s , %s ; xEnd, y End: %s, %s " +
-                                    "Display resolution:  %s", formatTime(stitchMessage.getSendTime()), stitchMessage.getClientId(),
-                            stitchMessage.getxStart(), stitchMessage.getyStart(), stitchMessage.getxEnd(), stitchMessage.getyEnd(),
-                            Arrays.toString(stitchMessage.getDisplayResolution())));
+                    //cachedMessages.add(String.format("[%s ; %s]: xStart, yStart: %s , %s ; xEnd, y End: %s, %s " +
+                      //              "Display resolution:  %s", formatTime(stitchMessage.getSendTime()), stitchMessage.getClientId(),
+                        //    stitchMessage.getxStart(), stitchMessage.getyStart(), stitchMessage.getxEnd(), stitchMessage.getyEnd(),
+                          //  Arrays.toString(stitchMessage.getDisplayResolution())));
                             //check owner(0-1) and number of stitch (0-1)
-                            int stitchNum = StitchEvaluations.getStitchNumAndSide(stitchMessage)[0];
-                            boolean owner = StitchEvaluations.checkOwner(stitchMessage);
-                            SavedMessage msg1 = new SavedMessage(stitchMessage, stitchNum, owner);
-                            addSavedMessage(msg1);
-                            Log.i(DEBUG_TAG, "Saved1 message to savedMessages " + msg1.getSavedMessage());
+                            //int stitchNum = StitchEvaluations.getStitchNumAndSide(stitchMessage)[0];
+                            //boolean owner = StitchEvaluations.checkOwner(stitchMessage);
+                            //SavedMessage msg1 = new SavedMessage(stitchMessage, stitchNum, owner);
+                            //addSavedMessage(msg1);
+                            //Log.i(DEBUG_TAG, "Saved1 message to savedMessages " + msg1.getSavedMessage());
+                    //MessageProcessing.messageProcessing(stitchMessage);
                 } else {
                     current.runOnUiThread(new Runnable() {
                         @Override
@@ -92,17 +94,18 @@ public class CustomStitchActionListener implements ClientActionListener {
                                     serverOut.append("\n");
                                 }
                             }
-                            serverOut.append(String.format("[%s ; %s]: xStart, yStart: %s , %s ; xEnd, y End: %s, %s " +
-                                            "Display resolution:  %s", formatTime(stitchMessage.getSendTime()), stitchMessage.getClientId(),
-                                    stitchMessage.getxStart(), stitchMessage.getyStart(), stitchMessage.getxEnd(), stitchMessage.getyEnd(),
-                                    Arrays.toString(stitchMessage.getDisplayResolution())));
-                            serverOut.append("\n");
+                            //serverOut.append(String.format("[%s ; %s]: xStart, yStart: %s , %s ; xEnd, y End: %s, %s " +
+                            //                "Display resolution:  %s", formatTime(stitchMessage.getSendTime()), stitchMessage.getClientId(),
+                            //        stitchMessage.getxStart(), stitchMessage.getyStart(), stitchMessage.getxEnd(), stitchMessage.getyEnd(),
+                            //        Arrays.toString(stitchMessage.getDisplayResolution())));
+                            //serverOut.append("\n");
                             //check owner(0-1) and number of stitch (0-1)
-                            int stitchNum = StitchEvaluations.getStitchNumAndSide(stitchMessage)[0];
-                            boolean owner = StitchEvaluations.checkOwner(stitchMessage);
-                            SavedMessage msg2 = new SavedMessage(stitchMessage, stitchNum, owner);
-                            addSavedMessage(msg2);
-                            Log.i(DEBUG_TAG, "Saved2 message to savedMessages " + msg2.getSavedMessage());
+                            //int stitchNum = StitchEvaluations.getStitchNumAndSide(stitchMessage)[0];
+                            //boolean owner = StitchEvaluations.checkOwner(stitchMessage);
+                            //SavedMessage msg2 = new SavedMessage(stitchMessage, stitchNum, owner);
+                            //addSavedMessage(msg2);
+                            MessageProcessing.messageProcessing(stitchMessage);
+                            //Log.i(DEBUG_TAG, "Saved2 message to savedMessages " + msg2.getSavedMessage());
                         }
                     });
                 }
