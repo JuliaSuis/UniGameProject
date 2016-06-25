@@ -66,7 +66,7 @@ public class CustomStitchActionListener implements ClientActionListener {
                                 Toast.LENGTH_SHORT).show();
                                 setMyIp(message.getClientId());
 
-                            current.findViewById(R.id.button_send_class_message).setEnabled(true);
+                            //current.findViewById(R.id.button_send_class_message).setEnabled(true);
                     }
                 });
             }  else if (message instanceof StitchMessage) {

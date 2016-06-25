@@ -10,6 +10,8 @@ import android.text.Layout;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.graphics.Point;
 import android.view.Display;
@@ -60,6 +62,20 @@ public class StitchActivity extends AppCompatActivity implements View.OnTouchLis
                // if (releaseTime != -1l) duration = pressTime - releaseTime;
                 xStart = x;
                 yStart = y;
+                Neighbour neighbourForDraw = MessageProcessing.getNeighbourForDraw();
+                if (neighbourForDraw.getId() != null) {
+                    float x1 = (float) neighbourForDraw.getxUp();
+                    float y1 = (float) neighbourForDraw.getyUp();
+                    float x2 = (float) neighbourForDraw.getxDown();
+                    float y2 = (float) neighbourForDraw.getyDown();
+
+                    canvas.drawLine(x1, y1, x2, y2, paint);
+
+
+                    Log.i(DEBUG_TAG, "x1= " + x1 + " y1= " + y1 + " x2= " + x2 + " y2= " + y2);
+                    imageView.invalidate();
+                }
+
                 break;
             case MotionEvent.ACTION_MOVE: // движение
                 break;
@@ -68,7 +84,7 @@ public class StitchActivity extends AppCompatActivity implements View.OnTouchLis
                // duration = System.currentTimeMillis() - pressTime;
                 xEnd = x;
                 yEnd = y;
-                mButtonSendClass.setEnabled(true);
+                //mButtonSendClass.setEnabled(true);
                 Client client = Connection.getConnection().getClientInstance();
                 if (client == null) {
                     throw new RuntimeException("Client must be sat first!");
@@ -88,7 +104,6 @@ public class StitchActivity extends AppCompatActivity implements View.OnTouchLis
 
         // how to call neighboutToDraw
         //Neighbour neighbourForDraw = MessageProcessing.getNeighbourForDraw();
-
         return true;
     }
 
@@ -109,12 +124,14 @@ public class StitchActivity extends AppCompatActivity implements View.OnTouchLis
 
 
             Neighbour neighbourForDraw = MessageProcessing.getNeighbourForDraw();
+            neighbourForDraw.getId().isEmpty();
             float x1 = (float) neighbourForDraw.getxUp();
             float y1 = (float) neighbourForDraw.getyUp();
             float x2 = (float) neighbourForDraw.getxDown();
             float y2 = (float) neighbourForDraw.getyDown();
 
             canvas.drawLine(x1,y1,x2,y2, paint);
+
 
             Log.i(DEBUG_TAG, "x1= " + x1 + " y1= " + y1 + " x2= " + x2 + " y2= " + y2);
             imageView.invalidate();
@@ -125,11 +142,14 @@ public class StitchActivity extends AppCompatActivity implements View.OnTouchLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
         setContentView(R.layout.activity_client_activity_class_message);
-        mButtonSendClass = (Button) findViewById(R.id.button_send_class_message);
-        mButtonSendClass.setEnabled(false);
+
+        /*mButtonSendClass = (Button) findViewById(R.id.button_send_class_message);
+        mButtonSendClass.setEnabled(false);*/
         view = findViewById(R.id.stich_field);
         view.setOnTouchListener(this);
 
@@ -157,12 +177,12 @@ public class StitchActivity extends AppCompatActivity implements View.OnTouchLis
     @Override
     protected void onResume() {
         super.onResume();
-        mButtonSendClass.setOnClickListener(mButtonSendClassListener);
+       // mButtonSendClass.setOnClickListener(mButtonSendClassListener);
     }
 
     @Override
     protected void onPause() {
-        mButtonSendClass.setOnClickListener(null);
+        //mButtonSendClass.setOnClickListener(null);
         super.onPause();
     }
 }

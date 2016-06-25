@@ -4,10 +4,25 @@ package julia.uniGameProject.gestureRegistartion;
  * Created by julia on 23.06.16.
  */
 
+import android.content.Context;
+import android.text.format.Formatter;
 import android.util.Log;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiInfo;
+
+import javax.jmdns.JmDNS;
 
 import julia.connectivity.client.Client;
 import julia.connectivity.communication.StitchMessage;
+import julia.uniGameProject.SampleApplication;
 
 public class StitchEvaluations {
 
@@ -21,7 +36,7 @@ public class StitchEvaluations {
 
     public static boolean checkDelay(long msgSentTime, long MsgReceivedDateMS){
         long delay = MsgReceivedDateMS - msgSentTime;
-        if (delay < 5000) {
+        if (delay < 6000) {
             Log.i(DEBUG_TAG, "1st Msg = " + msgSentTime + " 2nd Msg " + MsgReceivedDateMS);
             Log.i(DEBUG_TAG, "Delay is = " + delay);
             return true;
@@ -48,14 +63,18 @@ public class StitchEvaluations {
         int stitchNum = 0;
         int side = 0;
 
-        double xa = displayWidth*0.15, xb= displayWidth*0.85, ya = displayHight*0.15, yb = displayHight*0.85; // limits for stitch
+        double xa = displayWidth*0.1, xb= displayWidth*0.9, ya = displayHight*0.1, yb = displayHight*0.9; // limits for stitch
         if (xa<xStart && xStart<xb && ya<yStart && yStart<yb){
             if (ya<yEnd && yEnd<yb && (xEnd>displayWidth-limit)) {stitchNum =1; side = 3;}
-            else if (xa<xEnd && xEnd<xb && (yEnd>displayHight-limit)) {stitchNum = 1; side = 0;}
+         //   else if (xa<xEnd && xEnd<xb && (yEnd>displayHight-limit)) {stitchNum = 1; side = 0;}
+            else if (xa<xEnd && xEnd<xb && (yEnd<limit)) {stitchNum = 1; side = 2;}
         }
         else if (xa<xEnd & xEnd<xb & ya<yEnd & yEnd<yb){
             if (xStart<limit & ya<yStart & yStart<yb ) {stitchNum =2; side = 1;}
-            if (yStart<limit & xa<xStart & xStart<xb) {stitchNum =2; side = 2;}
+         //   if (yStart<limit & xa<xStart & xStart<xb) {stitchNum =2; side = 2;}
+            if (yEnd<displayHight-limit & xa<xStart & xStart<xb) {stitchNum =2; side = 0;}
+            Log.i(DEBUG_TAG, "yStart" + yStart+" yEnd "+yEnd);
+
         }
         NumAndSide[0] = stitchNum;
         NumAndSide[1] = side;
@@ -65,7 +84,7 @@ public class StitchEvaluations {
     public static boolean checkOwner(StitchMessage stitchMessage){
         String SenderId = stitchMessage.getClientId();
         Log.i(DEBUG_TAG, "SenderId " + SenderId);
-        String MyId = Client.getIdMsg().substring(1);
+        String MyId = StitchEvaluations.getLocalIpAddress();
         Log.i(DEBUG_TAG, "MyId " + MyId);
         if (SenderId.equals(MyId)) {
             return true;
@@ -73,4 +92,32 @@ public class StitchEvaluations {
             return false;
         }
     }
+
+    public static String getLocalIpAddress(){
+        try {
+            WifiManager wifi = (WifiManager) SampleApplication.getActivity().getSystemService(android.content.Context.WIFI_SERVICE);
+            WifiInfo wifiInfo = wifi.getConnectionInfo();
+            int intaddr = wifiInfo.getIpAddress();
+
+            byte[] byteaddr = new byte[]{
+                    (byte) (intaddr & 0xff),
+                    (byte) (intaddr >> 8 & 0xff),
+                    (byte) (intaddr >> 16 & 0xff),
+                    (byte) (intaddr >> 24 & 0xff)
+            };
+            InetAddress addr = InetAddress.getByAddress(byteaddr);
+            return addr.toString().substring(1);
+        } catch (IOException e) {
+            Log.d(DEBUG_TAG, "Error in JmDNS creation: " + e);
+        }
+        return "";
+    }
+
+    //public static String getLocalIpAddress(){
+    //    WifiManager wifiMan = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
+     //   WifiInfo wifiInf = wifiMan.getConnectionInfo();
+     //   int ipAddress = wifiInf.getIpAddress();
+     //   String ip = String.format("%d.%d.%d.%d", (ipAddress & 0xff),(ipAddress >> 8 & 0xff),(ipAddress >> 16 & 0xff),(ipAddress >> 24 & 0xff));
+     //   return ip;
+    //}
 }

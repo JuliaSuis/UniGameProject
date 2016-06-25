@@ -32,6 +32,7 @@ public class MessageProcessing {
     public static void messageProcessing(StitchMessage stitchMessage) {
         Log.i(DEBUG_TAG, "NEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW ");
         int[] numAndSide = StitchEvaluations.getStitchNumAndSide(stitchMessage);
+        Log.i(DEBUG_TAG, "Side " + numAndSide[1]);
         boolean owner = StitchEvaluations.checkOwner(stitchMessage);
         Log.i(DEBUG_TAG, "Am I owner? " + owner);
         if (numAndSide[0] == 1) {

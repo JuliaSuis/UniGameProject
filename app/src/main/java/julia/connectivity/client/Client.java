@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -12,6 +13,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import javax.jmdns.JmDNS;
+
 import julia.connectivity.communication.Message;
 import julia.connectivity.serialization.Serializer;
 
@@ -47,7 +51,6 @@ public class Client {
             protected Void doInBackground(Void... voids) {
                 try {
                     serverSocket = new Socket(inetAddress, port);
-                    Log.d(DEBUG_TAG, "My LOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + inetAddress);
                     sendingThreadExecutor.execute(new ClientSendingRunnable(
                             Client.this,
                             serverSocket,
