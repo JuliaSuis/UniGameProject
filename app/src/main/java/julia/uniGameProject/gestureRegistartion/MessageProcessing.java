@@ -74,7 +74,7 @@ public class MessageProcessing {
                           if (StitchEvaluations.checkDelay(savedMessages.get(savedMessages.size()-1).getStitchMessage().getSendTime().getTime(), stitchMessage.getSendTime().getTime())) {
                               newNeighbour = Neighbour.createNeighbour(savedMessages.get(savedMessages.size()-1), new SavedMessage(stitchMessage, numAndSide[0], owner, numAndSide[1]));
                               sideNeighbours.addNewNeighbour(newNeighbour);
-                              allNeighbours.addToAllNeighbours(sideNeighbours, numAndSide[1]);
+                              allNeighbours.addToAllNeighbours(sideNeighbours, savedMessages.get(savedMessages.size()-1).getSide());
                               neighbourForDraw =  Neighbour.createNeighbour(savedMessages.get(savedMessages.size()-1), new SavedMessage(stitchMessage, numAndSide[0], owner, numAndSide[1]));
                               Log.i(DEBUG_TAG, "We've received 2 stitch message, the previous 1 stitch message was mine and time daelay is ok!  ");
                               savedMessages.clear();
