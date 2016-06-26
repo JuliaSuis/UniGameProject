@@ -15,6 +15,7 @@ import julia.connectivity.communication.StitchMessage;
 public class MessageProcessing {
     private static final String DEBUG_TAG = MessageProcessing.class.getName();
     public static Neighbour neighbourForDraw = new Neighbour();
+    public  static Neighbour newNeighbour = new Neighbour();
 
     public static Neighbour getNeighbourForDraw() {
         return neighbourForDraw;
@@ -28,6 +29,9 @@ public class MessageProcessing {
     public static void addSavedMessage(SavedMessage savedMessage){
         savedMessages.add(savedMessage);
     }
+
+    private static SideNeighbours sideNeighbours = new SideNeighbours();
+    private static AllNeighbours allNeighbours = new AllNeighbours();
 
     public static void messageProcessing(StitchMessage stitchMessage) {
         Log.i(DEBUG_TAG, "NEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW ");
@@ -55,6 +59,9 @@ public class MessageProcessing {
               } else {
                   if (owner == true) {
                       if (StitchEvaluations.checkDelay(savedMessages.get(savedMessages.size()-1).getStitchMessage().getSendTime().getTime(), stitchMessage.getSendTime().getTime())) {
+                          newNeighbour = Neighbour.createNeighbour(savedMessages.get(savedMessages.size()-1), new SavedMessage(stitchMessage, numAndSide[0], owner, numAndSide[1]));
+                          sideNeighbours.addNewNeighbour(newNeighbour);
+                          allNeighbours.addToAllNeighbours(sideNeighbours, numAndSide[1]);
                           neighbourForDraw =  Neighbour.createNeighbour(savedMessages.get(savedMessages.size()-1), new SavedMessage(stitchMessage, numAndSide[0], owner, numAndSide[1]));
                           Log.i(DEBUG_TAG, "We've received my own 2 stitch message and delay is ok!  ");
                           savedMessages.clear();
@@ -65,6 +72,9 @@ public class MessageProcessing {
                       } else {
                       if (savedMessages.get(savedMessages.size()-1).isStitchOwner() == true) {
                           if (StitchEvaluations.checkDelay(savedMessages.get(savedMessages.size()-1).getStitchMessage().getSendTime().getTime(), stitchMessage.getSendTime().getTime())) {
+                              newNeighbour = Neighbour.createNeighbour(savedMessages.get(savedMessages.size()-1), new SavedMessage(stitchMessage, numAndSide[0], owner, numAndSide[1]));
+                              sideNeighbours.addNewNeighbour(newNeighbour);
+                              allNeighbours.addToAllNeighbours(sideNeighbours, numAndSide[1]);
                               neighbourForDraw =  Neighbour.createNeighbour(savedMessages.get(savedMessages.size()-1), new SavedMessage(stitchMessage, numAndSide[0], owner, numAndSide[1]));
                               Log.i(DEBUG_TAG, "We've received 2 stitch message, the previous 1 stitch message was mine and time daelay is ok!  ");
                               savedMessages.clear();

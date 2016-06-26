@@ -9,6 +9,7 @@ public class AllNeighbours {
 
     private SideNeighbours[] allNeighbours = new SideNeighbours[4];
 
+
     public AllNeighbours(){
     }
 
@@ -17,6 +18,10 @@ public class AllNeighbours {
         this.allNeighbours[1] = left;
         this.allNeighbours[2] = up;
         this.allNeighbours[3] = right;
+    }
+
+    public void addToAllNeighbours(SideNeighbours sideNeighbours, int side){
+        this.allNeighbours[side] = sideNeighbours;
     }
 
 

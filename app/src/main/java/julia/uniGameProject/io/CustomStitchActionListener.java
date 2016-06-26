@@ -39,15 +39,15 @@ public class CustomStitchActionListener implements ClientActionListener {
 
     private List<String> cachedMessages = new ArrayList<>();
 
-    private ArrayList<SavedMessage> savedMessages = new ArrayList<SavedMessage>();
+    //private ArrayList<SavedMessage> savedMessages = new ArrayList<SavedMessage>();
 
     //public ArrayList<SavedMessage> getStitchMessages() {
     //    return savedMessages;
     //}
 
-    public void addSavedMessage(SavedMessage savedMessage){
+    /*public void addSavedMessage(SavedMessage savedMessage){
         this.savedMessages.add(savedMessage);
-    }
+    }*/
 
 
 
