@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.Arrays;
+
 import javax.jmdns.ServiceInfo;
 
 import julia.connectivity.Connection;
@@ -134,10 +136,11 @@ public class MainActivity extends Activity {
         connection.findServers(new NetworkDiscovery.OnFoundListener() {
             @Override
             public void onFound(ServiceInfo info) {
-                if (info != null && info.getInet4Addresses().length > 0) {
+                Log.d(DEBUG_TAG, String.format("Found servers: %s", Arrays.toString(info.getInetAddresses())));
+                if (info != null && info.getInetAddresses().length > 0 && info.getPort() > 0) {
                     connection.stopNetworkDiscovery();
                     connection.connectToServer(
-                            info.getInet4Addresses()[0],
+                            info.getInetAddresses()[0],
                             info.getPort()
                     );
                     connection.resetClientIOCallback(T);

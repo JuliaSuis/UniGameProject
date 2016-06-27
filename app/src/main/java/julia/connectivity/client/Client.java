@@ -51,10 +51,18 @@ public class Client {
             protected Void doInBackground(Void... voids) {
                 try {
                     serverSocket = new Socket(inetAddress, port);
-                    sendingThreadExecutor.execute(new ClientSendingRunnable(
-                            Client.this,
-                            serverSocket,
-                            sendMessageQueue));
+                    if (serverSocket.isConnected()) {
+                        Log.d(DEBUG_TAG, String.format("Connected to the server at address %s:%d",
+                                serverSocket.getInetAddress().getHostName(), serverSocket.getPort())
+                        );
+                        sendingThreadExecutor.execute(new ClientSendingRunnable(
+                                Client.this,
+                                serverSocket,
+                                sendMessageQueue));
+                    } else {
+                        throw new RuntimeException("Cannot connect to the server!");
+                    }
+                    Log.d(DEBUG_TAG, "Sending/Receiving threads successfully started!");
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

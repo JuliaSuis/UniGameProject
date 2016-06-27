@@ -96,6 +96,8 @@ public class Connection {
             @Override
             protected Void doInBackground(Void... params) {
                 mNetworkDiscovery.startServer(getServerPort());
+                Log.d(DEBUG_TAG,
+                        String.format("Server have been started at port [%d]", getServerPort()));
                 return null;
             }
         }.execute((Void) null);

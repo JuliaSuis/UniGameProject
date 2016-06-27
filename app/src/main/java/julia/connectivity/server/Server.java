@@ -37,9 +37,16 @@ public class Server {
     private volatile ServerActionListener actionListener;
 
     public Server() {
-        executorService.execute(new AcceptRunnable());
-        sendingRunnable = new ServerSendingRunnable(this);
-        executorService.execute(sendingRunnable);
+        try {
+            serverSocket = new ServerSocket(0);
+            inetAddress = serverSocket.getInetAddress();
+            port = serverSocket.getLocalPort();
+            executorService.execute(new AcceptRunnable());
+            sendingRunnable = new ServerSendingRunnable(this);
+            executorService.execute(sendingRunnable);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public InetAddress getInetAddress() {
@@ -162,14 +169,12 @@ public class Server {
         @Override
         public void run() {
             try {
-                serverSocket = new ServerSocket(0);
-                inetAddress = serverSocket.getInetAddress();
-                port = serverSocket.getLocalPort();
                 while (!Thread.currentThread().isInterrupted()) {
                     Log.d(DEBUG_TAG, "Listening for incoming...");
                     Socket clientSocket = serverSocket.accept();
                     String clientHostName = clientSocket.getInetAddress().getHostName();
                     clients.put(clientHostName, clientSocket);
+                    Log.d(DEBUG_TAG, "Existing clients: " + clients.keySet());
                     sendMessageToClient(new Status(Status.CONNECTION_OK), clientHostName);
                     executorService.execute(
                             new ServerReceiverRunnable(Server.this, clientSocket)
