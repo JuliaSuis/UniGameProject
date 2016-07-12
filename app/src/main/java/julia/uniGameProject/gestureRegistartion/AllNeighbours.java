@@ -24,6 +24,13 @@ public class AllNeighbours {
         this.allNeighbours[side] = sideNeighbours;
     }
 
+    public SideNeighbours getSideNeighbours(int side){
+        if (allNeighbours[side] != null) {
+            return allNeighbours[side];
+        }
+        return null;
+    }
+
 
 
 

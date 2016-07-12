@@ -28,7 +28,7 @@ import julia.uniGameProject.gestureRegistartion.StitchEvaluations;
  * Created by julia on 20.06.16.
  */
 public class CustomStitchActionListener implements ClientActionListener {
-    private static final String DEBUG_TAG = CustomClientActionListener.class.getName();
+    private static final String DEBUG_TAG = CustomStitchActionListener.class.getName();
     private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
 
     static public String myIp;

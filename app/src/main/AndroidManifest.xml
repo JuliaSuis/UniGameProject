@@ -30,7 +30,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ClientActivity" />
-        <activity android:name=".StitchActivity"></activity>
+        <activity android:name=".StitchActivity" />
+        <activity android:name=".GameActivity"></activity>
     </application>
 
 </manifest>

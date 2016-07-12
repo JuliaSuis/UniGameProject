@@ -1,5 +1,6 @@
 package julia.uniGameProject;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -28,6 +29,9 @@ import julia.connectivity.communication.SimpleMessage;
 import julia.connectivity.communication.StitchMessage;
 import julia.uniGameProject.gestureRegistartion.MessageProcessing;
 import julia.uniGameProject.gestureRegistartion.Neighbour;
+import julia.uniGameProject.io.CustomGameActionListener;
+import julia.uniGameProject.io.CustomGameActionListener;
+import julia.uniGameProject.io.CustomStitchActionListener;
 
 
 public class StitchActivity extends AppCompatActivity implements View.OnTouchListener{
@@ -48,6 +52,9 @@ public class StitchActivity extends AppCompatActivity implements View.OnTouchLis
     private Canvas canvas;
     private Paint paint;
     private ImageView imageView;
+    private double duration = -1l;
+    private double releaseTime = -1l;
+    private double pressTime =-1l;
 
 
 
@@ -56,32 +63,39 @@ public class StitchActivity extends AppCompatActivity implements View.OnTouchLis
         double x = event.getX();
         double y = event.getY();
 
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-               // pressTime = System.currentTimeMillis();
-               // if (releaseTime != -1l) duration = pressTime - releaseTime;
+                pressTime = System.currentTimeMillis();
+                if (releaseTime != -1l) duration = pressTime - releaseTime;
                 xStart = x;
                 yStart = y;
-                Neighbour neighbourForDraw = MessageProcessing.getNeighbourForDraw();
-                if (neighbourForDraw.getId() != null) {
-                    float x1 = (float) neighbourForDraw.getxUp();
-                    float y1 = (float) neighbourForDraw.getyUp();
-                    float x2 = (float) neighbourForDraw.getxDown();
-                    float y2 = (float) neighbourForDraw.getyDown();
-
-                    canvas.drawLine(x1, y1, x2, y2, paint);
 
 
-                    Log.i(DEBUG_TAG, "x1= " + x1 + " y1= " + y1 + " x2= " + x2 + " y2= " + y2);
-                    imageView.invalidate();
+                    Neighbour neighbourForDraw = MessageProcessing.getNeighbourForDraw();
+                    if (neighbourForDraw.getId() != null) {
+
+                        float x1 = (float) neighbourForDraw.getxUp();
+                        float y1 = (float) neighbourForDraw.getyUp();
+                        float x2 = (float) neighbourForDraw.getxDown();
+                        float y2 = (float) neighbourForDraw.getyDown();
+
+                        canvas.drawLine(x1, y1, x2, y2, paint);
+
+
+                        Log.i(DEBUG_TAG, "x1= " + x1 + " y1= " + y1 + " x2= " + x2 + " y2= " + y2);
+                        imageView.invalidate();
+
                 }
+
+
 
                 break;
             case MotionEvent.ACTION_MOVE: // движение
                 break;
             case MotionEvent.ACTION_UP: // отпускание
-              //  releaseTime = System.currentTimeMillis();
-               // duration = System.currentTimeMillis() - pressTime;
+                releaseTime = System.currentTimeMillis();
+                duration = System.currentTimeMillis() - pressTime;
                 xEnd = x;
                 yEnd = y;
                 //mButtonSendClass.setEnabled(true);
@@ -93,6 +107,19 @@ public class StitchActivity extends AppCompatActivity implements View.OnTouchLis
                 StitchMessage stitchMessage = new StitchMessage(xStart, yStart, xEnd, yEnd, resolution);
                 stitchMessage.setSendTime(new Date());
                 client.sendMessage(stitchMessage);
+
+                if (duration != -1l) {
+                    if (duration >= 4000) {
+
+                        Intent intent = new Intent(StitchActivity.this, GameActivity.class);
+                        startActivity(intent);
+
+
+
+
+
+                    }
+                }
 
                 //  stitchOffset();
 
