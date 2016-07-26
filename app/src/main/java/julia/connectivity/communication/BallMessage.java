@@ -5,6 +5,7 @@ package julia.connectivity.communication;
  */
 public class BallMessage extends BaseMessage {
     private int speed;
+    private int speedX;
     private int height;
     private int width;
     private String idNeighbour;
@@ -12,15 +13,19 @@ public class BallMessage extends BaseMessage {
     public BallMessage(){
     }
 
-    public BallMessage(int speed, int height, int width, String idNeighbour){
+    public BallMessage(int speed, int speedX, int height, int width, String idNeighbour){
         this.speed = speed;
         this.height = height;
         this.width = width;
+        this.speedX = speedX;
         this.idNeighbour = idNeighbour;
     }
 
     public int getSpeed() {
         return speed;
+    }
+    public int getSpeedX() {
+        return speedX;
     }
 
     public int getHeight() {
@@ -33,6 +38,10 @@ public class BallMessage extends BaseMessage {
 
     public String getIdNeighbour() {
         return idNeighbour;
+    }
+
+    public void setSpeedX(int speedX) {
+        this.speedX = speedX;
     }
 
     public void setSpeed(int speed) {

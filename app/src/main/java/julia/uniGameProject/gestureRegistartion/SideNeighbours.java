@@ -11,8 +11,8 @@ public class SideNeighbours {
     public SideNeighbours(){
     }
 
-
     public void addNewNeighbour(Neighbour neighbour){
+        sideNeighbours.clear();
        this.sideNeighbours.add(neighbour);
     }
 

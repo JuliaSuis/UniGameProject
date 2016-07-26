@@ -85,6 +85,7 @@ public class StitchActivity extends AppCompatActivity implements View.OnTouchLis
 
                         Log.i(DEBUG_TAG, "x1= " + x1 + " y1= " + y1 + " x2= " + x2 + " y2= " + y2);
                         imageView.invalidate();
+                        Log.i(DEBUG_TAG, "xstitch neighbour id " + neighbourForDraw.getId());
 
                 }
 

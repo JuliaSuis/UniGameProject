@@ -13,12 +13,19 @@ public class PlayerRacket {
     private Bitmap bitmap;
     private Bitmap resized_bitmap;
     private int x,y;
+    private int lives;
+    private Bitmap livesBitmap;
+    private Bitmap resizedHeart;
+    private int r;
 
 
     public PlayerRacket(Context context){
         x=0;
         y=0;
-        bitmap= BitmapFactory.decodeResource(context.getResources(), R.drawable.racket);
+        lives=3;
+        bitmap= BitmapFactory.decodeResource(context.getResources(), R.drawable.racket2);
+        livesBitmap = BitmapFactory.decodeResource(context.getResources(),R.drawable.heart);
+
     }
 
     public void update(){
@@ -27,8 +34,20 @@ public class PlayerRacket {
     //Getters
     public Bitmap getBitmap(int d_height,int d_width){
 
-        resized_bitmap=Bitmap.createScaledBitmap(bitmap, (int)(d_width*0.2), (int)(d_height*0.023), true);
+        resized_bitmap=Bitmap.createScaledBitmap(bitmap, (int)(d_width*0.14), (int)(d_height*0.22), true);
         return resized_bitmap;
+    }
+
+    public int getRadius(int d_height,int d_width){
+
+        int r = getBitmap(d_height,d_width).getWidth()/2;
+        return r;
+    }
+
+    public Bitmap getLivesBitmap(int d_height,int d_width){
+        resizedHeart=Bitmap.createScaledBitmap(livesBitmap,(int)(d_width*0.04),(int)(d_height*0.07),true);
+        return resizedHeart;
+
     }
 
     public int getX(){
@@ -49,6 +68,14 @@ public class PlayerRacket {
 
     public void verticalMov(){
 
+    }
+
+    public int getLives(){
+        return lives;
+    }
+    public void setLives(){
+
+        lives= lives -1;
     }
 
 }

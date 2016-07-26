@@ -64,33 +64,38 @@ public class CustomGameActionListener implements ClientActionListener {
                 final BallMessage ballMessage = ((BallMessage) message);
                 final TextView serverOut = (TextView) current.findViewById(R.id.list_view_coordinate_receive);
                 //if (serverOut == null) {
-               // } else {
-                    current.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!cachedMessages.isEmpty()) {
-                                for (String cachedMessage : cachedMessages) {
-                                    serverOut.append(cachedMessage);
-                                    serverOut.append("\n");
-                                }
+                // } else {
+                current.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!cachedMessages.isEmpty()) {
+                            for (String cachedMessage : cachedMessages) {
+                                serverOut.append(cachedMessage);
+                                serverOut.append("\n");
                             }
-                            if (SmthForGame.checkTargetNeighbour(ballMessage)) {
-                                SmthForGame.saveBallM(SmthForGame.processBallMessage(ballMessage));
-                                GameView.setAmIServer(true);
-                                GameView.setIsMessage(true);
-                                GameView.setH(ballMessage.getHeight());
-                                GameView.setW(ballMessage.getWidth());
-                                GameView.setSpeed(ballMessage.getSpeed());
-                                Log.i(DEBUG_TAG, "I have received message and it's for meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee: " + msg);
-
-                            } else {
-                                Log.i(DEBUG_TAG, "NOT mine, nothing to do" + msg);
-                            }
-
                         }
-                    });
-                }
-           // }
+                        if (SmthForGame.checkTargetNeighbour(ballMessage)) {
+                            SmthForGame.saveBallM(SmthForGame.processBallMessage(ballMessage));
+                            GameView.setAmIServer(true);
+                            GameView.setIsMessage(true);
+                            GameView.setH(SmthForGame.processBallMessage(ballMessage).getHeight());
+                            GameView.setW(SmthForGame.processBallMessage(ballMessage).getWidth());
+                            GameView.setSpeed(SmthForGame.processBallMessage(ballMessage).getSpeed());
+                            GameView.setSpeedX(SmthForGame.processBallMessage(ballMessage).getSpeedX());
+                            //GameView.setH(ballMessage.getHeight());
+                            //GameView.setW(ballMessage.getWidth());
+                           // GameView.setSpeed(ballMessage.getSpeed());
+                           // GameView.setSpeedX(ballMessage.getSpeedX());
+                            Log.i(DEBUG_TAG, "I have received message and it's for meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee: " + msg);
+
+                        } else {
+                            Log.i(DEBUG_TAG, "NOT mine, nothing to do" + msg);
+                        }
+
+                    }
+                });
+            }
+            // }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

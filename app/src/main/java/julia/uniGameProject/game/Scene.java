@@ -15,6 +15,10 @@ public class Scene {
     private Bitmap resized_hor_bitmap;
     private Bitmap resized_ver_bitmap;
     private int verX,verY,horX,horY;
+    private Bitmap background;
+    private Bitmap resizedbackground;
+    private Bitmap gameOver;
+    private Bitmap resizedGameOver;
 
     int width=200;
     int height=15;
@@ -29,10 +33,24 @@ public class Scene {
     }
 
     public Scene(Context context){
-        bitmap_hor= BitmapFactory.decodeResource(context.getResources(), R.drawable.border_horizantal);
-        bitmap_ver= BitmapFactory.decodeResource(context.getResources(), R.drawable.border_vertical);
+        bitmap_hor= BitmapFactory.decodeResource(context.getResources(), R.drawable.border_hor_2);
+        bitmap_ver= BitmapFactory.decodeResource(context.getResources(), R.drawable.border_ver_2);
+        background=BitmapFactory.decodeResource(context.getResources(),R.drawable.bg);
+        gameOver=BitmapFactory.decodeResource(context.getResources(),R.drawable.gameover);
 
 
+
+    }
+
+    public Bitmap getBackGroundBitmap(int d_width, int d_height){
+
+        resizedbackground=Bitmap.createScaledBitmap(background,d_width,d_height,true);
+        return resizedbackground;
+    }
+
+    public Bitmap getGameOverBitmap(int d_width,int d_height){
+        resizedGameOver=Bitmap.createScaledBitmap(gameOver,d_width,d_height,true);
+        return resizedGameOver;
     }
 
     public Bitmap getBitmap_hor(int d_width, int d_height){

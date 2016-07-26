@@ -31,20 +31,19 @@ public class SmthForGame {
     }
     public static BallMessage processBallMessage(BallMessage message){
 
-            for (int i=0; i<=3; i++) {
-                if (allNeighbours.getSideNeighbours(i) != null) {
-                    for (int j = 0; j <= allNeighbours.getSideNeighbours(i).getSideNeihbours().size() - 1; j++) {
-                        if (allNeighbours.getSideNeighbours(i).getSideNeihbours().get(j).getId().equals(message.getClientId())) {
-                            int h = Math.abs((int) allNeighbours.getSideNeighbours(i).getSideNeihbours().get(j).getyUp() - message.getHeight());
-                            int w = 0;
-                            if (message.getWidth()<10) { w =500;}
-                            else w=500;
-                            BallMessage newBall = new BallMessage(message.getSpeed(), h, w, message.getIdNeighbour());
-                            return newBall;
-                        }
+        for (int i=0; i<=3; i++) {
+            if (allNeighbours.getSideNeighbours(i) != null) {
+                for (int j = 0; j <= allNeighbours.getSideNeighbours(i).getSideNeihbours().size() - 1; j++) {
+                    if (allNeighbours.getSideNeighbours(i).getSideNeihbours().get(j).getId().equals(message.getClientId())) {
+                        int h = (int) allNeighbours.getSideNeighbours(i).getSideNeihbours().get(j).getyUp() + message.getHeight();
+                        Log.i(DEBUG_TAG, "HEIGHTTTTT " + h + "  MSG= "+ message.getHeight()+ " "+allNeighbours.getSideNeighbours(i).getSideNeihbours().get(j).getyUp());
+
+                        BallMessage newBall = new BallMessage(message.getSpeed(), message.getSpeedX(), h, message.getWidth(), message.getIdNeighbour());
+                        return newBall;
                     }
                 }
             }
+        }
         return null;
     }
 

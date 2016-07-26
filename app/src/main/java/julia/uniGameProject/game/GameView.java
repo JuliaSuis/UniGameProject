@@ -23,6 +23,8 @@ import julia.uniGameProject.gestureRegistartion.MessageProcessing;
 public class GameView extends SurfaceView implements Runnable {
     volatile boolean playing;
     Thread gameThread = null;
+    public long time=0;
+    private int distance=0;
 
     private static final String DEBUG_TAG = GameView.class.getName();
 
@@ -48,6 +50,7 @@ public class GameView extends SurfaceView implements Runnable {
     private static int h = 500;
     private static int w = 500;
     private static int speed = 6;
+    private static int speedX = 6;
 
     public static void setH(int hh){
         h = hh;
@@ -57,6 +60,9 @@ public class GameView extends SurfaceView implements Runnable {
     }
     public static void setSpeed(int ss){
         speed = ss;
+    }
+    public static void setSpeedX(int ssx){
+        speedX = ssx;
     }
 
     public static void setIsMessage(boolean m){
@@ -89,10 +95,8 @@ public class GameView extends SurfaceView implements Runnable {
         paint.setColor(Color.RED);
         scene=new Scene(context);
 
-
         scene.setHorX(0);
         scene.setHorY(0);
-
         scene.setVerX(0);
         scene.setVerY(0);
 
@@ -102,12 +106,9 @@ public class GameView extends SurfaceView implements Runnable {
         ball.setY(displayHeight / 4);
 
 
-     /*   ball.setX(100);
-        ball.setY(h);
-        ball.setSpeedY(speed);
-        Log.i(DEBUG_TAG, "param "+ball.getY()+" "+ball.getSpeedY()); */
-
     }
+
+
 
     public void drawAllNeighbourSides(){
         for (int i=0;i<=3; i++) {
@@ -121,6 +122,8 @@ public class GameView extends SurfaceView implements Runnable {
 
                     paint.setColor(Color.BLACK);
                     canvas.drawLine(x1, y1, x2, y2, paint);
+                    Log.i(DEBUG_TAG, "i="+ i + " neighbourId= " + allNeighbours.getSideNeighbours(i).getSideNeihbours().get(j).getId());
+
                 }
             }
 
@@ -132,21 +135,38 @@ public class GameView extends SurfaceView implements Runnable {
         while (playing) {
             //       System.out.println(noOfPlayers);
             if (continueUpdate && amIServer)
-            update();
+                update();
+            checkForCollision();
             draw();
             control();
         }
     }
 
+    //Racket Collision
+    private void checkForCollision() {
+        double playerToBall = Math.sqrt((double) Math.pow((((double) player.getX() + player.getRadius(displayHeight, displayWidth)) - ((double) ball.getX() + ball.getRadius(displayHeight, displayWidth))), 2) +
+                Math.pow(((double) player.getY() + player.getRadius(displayHeight, displayWidth)) - ((double) ball.getY() + ball.getRadius(displayHeight, displayWidth)), 2));
+
+        //System.out.println(playerToBall);
+
+        if (playerToBall <= distance && (System.currentTimeMillis() - time) > 200) {
+
+            System.out.println("Collision");
+            ball.setSpeedY(-1 * ball.getSpeedY());
+
+            time = System.currentTimeMillis();
+        }
+    }
+
     //МЕТОД КОТОРЫЙ ПОЛУЧАЕТ НА ВХОД ВЫСОТУ И СКОРОСТЬ И ОТПРАВЛЯЕТ СООБЩЕНИЕ
-    private void sendBallMessage(int speed, int height, int width, String idNeighbour){
+    private void sendBallMessage(int speed, int speedX, int height, int width, String idNeighbour){
         Client client = Connection.getConnection().getClientInstance();
         if (client == null) {
             throw new RuntimeException("Client must be sat first!");
         }
 
-            BallMessage ballMessage = new BallMessage(speed, height, width, idNeighbour);
-           client.sendMessage(ballMessage);
+        BallMessage ballMessage = new BallMessage(speed, speedX, height, width, idNeighbour);
+        client.sendMessage(ballMessage);
 
     }
 
@@ -164,22 +184,23 @@ public class GameView extends SurfaceView implements Runnable {
 //ЛУЧШЕ СДЕЛАТЬ МЕТОД КОТОРЫЙ ПОЛУЧАЕТ НА ВХОД ВЫСОТУ И СКОРОСТЬ И ОТПРАВЛЯЕТ СООБЩЕНИЕ
 
         //right
-        if (ball.getX() >= displayWidth - scene.getBitmap_ver().getWidth() - ball.getBitmap().getWidth()) {
+        if (ball.getX() >= displayWidth - scene.getBitmap_ver().getWidth() - ball.getBitmap(displayHeight,displayWidth).getWidth()) {
             if (side[3]) {
-                if (ball.getY() <= allNeighbours.getSideNeighbours(3).getSideNeihbours().get(0).getyUp() - ball.getBitmap().getWidth())
+                if (ball.getY() <= allNeighbours.getSideNeighbours(3).getSideNeihbours().get(0).getyUp() - ball.getBitmap(displayHeight,displayWidth).getWidth())
                     ball.setSpeedX(-1 * ball.getSpeedX());
-                else if (ball.getY() >= allNeighbours.getSideNeighbours(3).getSideNeihbours().get(0).getyDown() - ball.getBitmap().getWidth())
+                else if (ball.getY() >= allNeighbours.getSideNeighbours(3).getSideNeihbours().get(0).getyDown() - ball.getBitmap(displayHeight,displayWidth).getWidth())
                     ball.setSpeedX(-1 * ball.getSpeedX());
                 else {
 //REMEMBER HEIGHT AND SPEED //SEND THE MESSAGE
-                    int height = Math.abs((int)allNeighbours.getSideNeighbours(3).getSideNeihbours().get(0).getyUp()- ball.getY());
+                    int height = ball.getY()-(int)allNeighbours.getSideNeighbours(3).getSideNeihbours().get(0).getyUp();
+                    int width = 2*ball.getBitmap(displayHeight,displayWidth).getWidth();
                     Log.i(DEBUG_TAG, "moi razmeri1111111111111111111111111111111111111111111111 " +height+" "+Math.abs((int)allNeighbours.getSideNeighbours(3).getSideNeihbours().get(0).getyUp())+" "+ball.getY());
-                    sendBallMessage(ball.getSpeedY(),height,ball.getX(),allNeighbours.getSideNeighbours(3).getSideNeihbours().get(0).getId());
+                    sendBallMessage(ball.getSpeedY(),ball.getSpeedX(),height,width,allNeighbours.getSideNeighbours(3).getSideNeihbours().get(0).getId());
 //***********************************************************************
                     continueUpdate = false;
                     ball.setSpeedX(0);
                     ball.setSpeedY(0);
-                    ball.setX(displayWidth+ball.getBitmap().getWidth());
+                    ball.setX(displayWidth+ball.getBitmap(displayHeight,displayWidth).getWidth());
                 }
             }
             else {
@@ -190,21 +211,22 @@ public class GameView extends SurfaceView implements Runnable {
 
         if(ball.getX()<scene.getBitmap_ver().getWidth()) {
             if (side[1]) {
-                if (ball.getY() <= allNeighbours.getSideNeighbours(1).getSideNeihbours().get(0).getyUp() - ball.getBitmap().getWidth())
+                if (ball.getY() <= allNeighbours.getSideNeighbours(1).getSideNeihbours().get(0).getyUp() - ball.getBitmap(displayHeight,displayWidth).getWidth())
                     ball.setSpeedX(-1 * ball.getSpeedX());
-                else if (ball.getY() >= allNeighbours.getSideNeighbours(1).getSideNeihbours().get(0).getyDown() - ball.getBitmap().getWidth())
+                else if (ball.getY() >= allNeighbours.getSideNeighbours(1).getSideNeihbours().get(0).getyDown() - ball.getBitmap(displayHeight,displayWidth).getWidth())
                     ball.setSpeedX(-1 * ball.getSpeedX());
                 else {
 //REMEMBER HEIGHT AND SPEED //SEND THE MESSAGE
-                    int height = Math.abs((int)allNeighbours.getSideNeighbours(1).getSideNeihbours().get(0).getyUp()- ball.getY());
-                    sendBallMessage(ball.getSpeedY(),height,ball.getX(),allNeighbours.getSideNeighbours(1).getSideNeihbours().get(0).getId());
+                    int height = ball.getY()-(int)allNeighbours.getSideNeighbours(1).getSideNeihbours().get(0).getyUp();
+                    int width = displayWidth - scene.getBitmap_ver().getWidth() - 2*ball.getBitmap(displayHeight,displayWidth).getWidth();
+                    sendBallMessage(ball.getSpeedY(),ball.getSpeedX(),height,width,allNeighbours.getSideNeighbours(1).getSideNeihbours().get(0).getId());
                     Log.i(DEBUG_TAG, "moi razmeri222222222222222222222222222222222222222222222222 " +height+" "+Math.abs((int)allNeighbours.getSideNeighbours(1).getSideNeihbours().get(0).getyUp())+" "+ball.getY());
 
 //***********************************************************************
                     continueUpdate = false;
                     ball.setSpeedX(0);
                     ball.setSpeedY(0);
-                    ball.setX(-ball.getBitmap().getWidth());
+                    ball.setX(-ball.getBitmap(displayHeight,displayWidth).getWidth());
 
                 }
             }
@@ -215,15 +237,15 @@ public class GameView extends SurfaceView implements Runnable {
 
         if(ball.getY() < scene.getBitmap_hor().getHeight()) {
             if (side[2]) {
-                if (ball.getX() <= allNeighbours.getSideNeighbours(2).getSideNeihbours().get(0).getxUp() - ball.getBitmap().getWidth())
+                if (ball.getX() <= allNeighbours.getSideNeighbours(2).getSideNeihbours().get(0).getxUp() - ball.getBitmap(displayHeight,displayWidth).getWidth())
                     ball.setSpeedY(-1 * ball.getSpeedY());
-                else if (ball.getX() >= allNeighbours.getSideNeighbours(2).getSideNeihbours().get(0).getxDown() - ball.getBitmap().getWidth())
+                else if (ball.getX() >= allNeighbours.getSideNeighbours(2).getSideNeihbours().get(0).getxDown() - ball.getBitmap(displayHeight,displayWidth).getWidth())
                     ball.setSpeedY(-1 * ball.getSpeedY());
                 else {
 //REMEMBER HEIGHT AND SPEED //SEND THE MESSAGE
                     ball.setSpeedX(0);
                     ball.setSpeedY(0);
-                    ball.setY(-ball.getBitmap().getWidth());
+                    ball.setY(-ball.getBitmap(displayHeight,displayWidth).getWidth());
                 }
             }
             else {
@@ -231,17 +253,17 @@ public class GameView extends SurfaceView implements Runnable {
             }
         }
 
-        if(ball.getY()>=displayHeight-scene.getBitmap_hor().getHeight()-ball.getBitmap().getHeight()) {
+        if(ball.getY()>=displayHeight-scene.getBitmap_hor().getHeight()-ball.getBitmap(displayHeight,displayWidth).getHeight()) {
             if (side[0]) {
-                if (ball.getX() <= allNeighbours.getSideNeighbours(0).getSideNeihbours().get(0).getxUp() - ball.getBitmap().getWidth())
+                if (ball.getX() <= allNeighbours.getSideNeighbours(0).getSideNeihbours().get(0).getxUp() - ball.getBitmap(displayHeight,displayWidth).getWidth())
                     ball.setSpeedY(-1 * ball.getSpeedY());
-                else if (ball.getX() >= allNeighbours.getSideNeighbours(0).getSideNeihbours().get(0).getxDown() - ball.getBitmap().getWidth())
+                else if (ball.getX() >= allNeighbours.getSideNeighbours(0).getSideNeihbours().get(0).getxDown() - ball.getBitmap(displayHeight,displayWidth).getWidth())
                     ball.setSpeedY(-1 * ball.getSpeedY());
                 else {
 //REMEMBER HEIGHT AND SPEED //SEND THE MESSAGE
                     ball.setSpeedX(0);
                     ball.setSpeedY(0);
-                    ball.setY(displayHeight+ball.getBitmap().getWidth());
+                    ball.setY(displayHeight+ball.getBitmap(displayHeight,displayWidth).getWidth());
 
                 }
             }
@@ -250,20 +272,63 @@ public class GameView extends SurfaceView implements Runnable {
             }
         }
 
+
+        if(ball.getX()>displayWidth*0.3&&ball.getX()<displayWidth*0.6 && ball.getY()>displayHeight*0.9 && (System.currentTimeMillis()-time)>500){
+
+            ball.setSpeedY(-1*ball.getSpeedY());
+
+            player.setLives();
+
+            time=System.currentTimeMillis();
+
+        }
 
         //player.update();
         if (continueUpdate) {
-             ball.update();
+            ball.update();
         }
 
     }
 
     private void draw(){
+
+
         if (ourHolder.getSurface().isValid()){
             //First we lock the area of memory we will be drawing to
             canvas = ourHolder.lockCanvas();
             // Rub out the last frame
-            canvas.drawColor(Color.argb(255, 0, 0, 0));
+        //    canvas.drawColor(Color.argb(255, 0, 0, 0));
+            canvas.drawBitmap(scene.getBackGroundBitmap(displayWidth,displayHeight),
+                    0,0,paint);
+
+            //hearts
+
+            switch(player.getLives()){
+                case 3:
+                    canvas.drawBitmap(player.getLivesBitmap(displayWidth,displayHeight),30,25,paint);
+                    canvas.drawBitmap(player.getLivesBitmap(displayWidth,displayHeight),70,25,paint);
+                    canvas.drawBitmap(player.getLivesBitmap(displayWidth,displayHeight),110,25,paint);
+                    //  System.out.println("3 lives");
+                    break;
+                case 2:
+                    canvas.drawBitmap(player.getLivesBitmap(displayWidth,displayHeight),30,25,paint);
+                    canvas.drawBitmap(player.getLivesBitmap(displayWidth,displayHeight),70,25,paint);
+                    //  System.out.println("2 lives");
+                    break;
+                case 1:
+                    canvas.drawBitmap(player.getLivesBitmap(displayWidth,displayHeight),30,25,paint);
+                    //   System.out.println("1 lives");
+                    break;
+                case 0:
+                  //  gameOver=true;
+                    canvas.drawBitmap(scene.getGameOverBitmap(displayWidth,displayHeight),
+                            0,0,paint);
+                 //   System.out.println("Game Over");
+                    break;
+
+            }
+
+
 
             // Draw the player
             canvas.drawBitmap(
@@ -279,31 +344,24 @@ public class GameView extends SurfaceView implements Runnable {
             canvas.drawLine(0,displayHeight,displayWidth,displayHeight, paint); //bottom
             canvas.drawLine(0,0,0, displayHeight, paint); //left
 
-
             drawAllNeighbourSides();
-
             if (isMessage) {
+                continueUpdate = true;
                 ball.setX(w);
                 ball.setY(h);
                 ball.setSpeedY(speed);
-                ball.setSpeedX(speed);
-                Log.i(DEBUG_TAG, "param "+ball.getY()+" "+ball.getX()+" "+ball.getSpeedY());
+                ball.setSpeedX(speedX);
                 isMessage = false;
+                Log.i(DEBUG_TAG, "param "+ball.getY()+" "+ball.getX()+" "+ball.getSpeedY()+" "+ball.getSpeedX());
             }
 
             if(amIServer) {
-
                 canvas.drawBitmap(
-                    ball.getBitmap(),
-                    ball.getX(),
-                    ball.getY(),
-                    paint);
+                        ball.getBitmap(displayHeight,displayWidth),
+                        ball.getX(),
+                        ball.getY(),
+                        paint);
             }
-
-            //     if(startGame==false && amIServer==true) {
-            //         canvas.drawText(gameActivity.getIpFromShahinServer(), 70, 200, paint);
-            //         canvas.drawText("Port number is: " + gameActivity.getPortFromShahinServer(), 70, 280, paint);
-            //     }canvas.drawBitmap(scene.getBitmap_ver(),scene.getVerX(),scene.getVerY(),paint);
 
 
             // Unlock and draw the scene
